@@ -4,6 +4,13 @@ import os
 folder = os.path.dirname(os.path.abspath(__file__))
 file_data = os.path.join(folder, "data-kualitas-air-sungai.csv")
 
+if not os.path.exists(file_data):
+    for nama_alternatif in ("data-kualitas-air-sungai (1).csv", "data-kualitas-air-sungai(1).csv"):
+        kandidat = os.path.join(folder, nama_alternatif)
+        if os.path.exists(kandidat):
+            file_data = kandidat
+            break
+
 PARAMETER = {"1": ("ph", "pH"), "2": ("do", "DO (mg/L)"), "3": ("bod", "BOD (mg/L)"),
              "4": ("cod", "COD (mg/L)"), "5": ("ip", "Nilai IP")}
 KRITERIA = {"1": "Tertinggi", "2": "Terendah", "3": "Rentang nilai"}
