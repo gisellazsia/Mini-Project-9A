@@ -16,7 +16,7 @@ Program berbasis Python (CLI) untuk membandingkan kualitas air sungai dan danau 
 - [Persyaratan](#persyaratan)
 - [Cara Menjalankan](#cara-menjalankan)
 - [Panduan Penggunaan](#panduan-penggunaan)
-- [Daftar Fungsi](#daftar-fungsi)
+- [Struktur Program](#struktur-program)
 - [Validasi Data](#validasi-data)
 - [Hasil Pengujian](#hasil-pengujian)
 - [Batasan](#batasan)
@@ -35,10 +35,12 @@ Status mutu air mengacu pada metode Indeks Pencemaran (IP) sesuai **Kepmen LH No
 
 | Fitur | Keterangan |
 | --- | --- |
-| Register & Login | Pembuatan akun dengan password yang di-hash; login maksimal 3 kali percobaan |
-| Rata-rata per lokasi | Rata-rata pH, DO, BOD, COD dikelompokkan per sungai dan lokasi sampling, dengan filter kabupaten/sungai/lokasi |
+| Register & Login | Akun disimpan di `akun.csv`; password minimal 4 karakter; login maksimal 3 kali percobaan |
+| Daerah aktif | Filter kabupaten/sungai/lokasi disimpan per pengguna dan dipakai di semua menu; dapat diganti lewat menu **Ganti daerah** |
+| Rata-rata per lokasi | Rata-rata pH, DO, BOD, COD dikelompokkan per sungai dan lokasi sampling |
 | Cari data | Cari berdasarkan parameter (pH, DO, BOD, COD, Nilai IP) dengan kriteria **tertinggi**, **terendah**, atau **rentang nilai** |
-| Prioritas pemantauan | Lokasi diurutkan dari Nilai IP terbesar (paling tercemar) beserta ringkasan jumlah per status mutu air |
+| Prioritas pemantauan | Lokasi diurutkan dari Nilai IP terbesar (paling tercemar) beserta ringkasan jumlah titik per status mutu air |
+| Pengaturan tersimpan | Pilihan parameter, kriteria, jumlah tampilan, dan rentang nilai disimpan di `pengaturan.csv` dan dapat dipakai ulang pada pencarian berikutnya, bahkan di sesi lain |
 | Validasi data | Baris tidak lengkap, bukan tahun 2020, atau berisi nilai tidak valid otomatis dilewati |
 
 ## Dataset
@@ -73,10 +75,12 @@ Kolom yang dipakai program:
 .
 ├── main.py                        # Program utama (nama file dapat disesuaikan)
 ├── data-kualitas-air-sungai.csv   # Dataset (harus satu folder dengan program)
+├── akun.csv                       # Dibuat otomatis saat ada yang register
+├── pengaturan.csv                 # Dibuat otomatis saat pengaturan disimpan
 └── README.md
 ```
 
-> Program membaca dataset dari folder yang sama dengan file program. Pastikan nama file CSV persis `data-kualitas-air-sungai.csv`.
+> Semua file dibaca dan ditulis di folder yang sama dengan file program. Pastikan nama file CSV dataset persis `data-kualitas-air-sungai.csv`. File `akun.csv` dan `pengaturan.csv` tidak perlu dibuat manual.
 
 ## Persyaratan
 
@@ -114,29 +118,36 @@ Data dimuat: 149 baris valid, 1 baris dibuang.
 ```
 
 - **Register**: masukkan username baru dan password (minimal 4 karakter). Registrasi gagal jika username kosong atau sudah dipakai.
-- **Login**: masukkan username dan password. Tersedia 3 kali percobaan.
+- **Login**: masukkan username dan password. Tersedia 3 kali percobaan dengan informasi sisa percobaan.
 
 ### 2. Menu utama (setelah login)
 
 ```
-=== MENU UTAMA ===
+=== MENU UTAMA (user: <username>) ===
  1. Rata-rata pH, DO, BOD, COD per lokasi
  2. Cari data (tertinggi / terendah / rentang)
  3. Prioritas pemantauan (Nilai IP & status)
- 4. Logout
+ 4. Ganti daerah
+ 5. Logout
 ```
 
-**Menu 1 – Rata-rata per lokasi.** Masukkan kata kunci filter (kabupaten, sungai, atau lokasi; tidak peka huruf besar/kecil) atau kosongkan untuk menampilkan semua. Contoh: `Aceh Barat`.
+**Daerah aktif.** Saat pertama kali membuka menu 1, 2, atau 3, program meminta filter daerah (kabupaten, sungai, atau lokasi; tidak peka huruf besar/kecil; kosong = semua data). Filter ini disimpan dan otomatis dipakai pada pemakaian berikutnya. Contoh: `Aceh Barat`.
+
+**Menu 1 – Rata-rata per lokasi.** Menampilkan rata-rata pH, DO, BOD, dan COD untuk setiap kombinasi sungai dan lokasi pada daerah aktif, beserta total jumlah lokasi.
 
 **Menu 2 – Cari data.**
-1. Pilih parameter: pH, DO, BOD, COD, atau Nilai IP.
-2. Pilih kriteria: tertinggi, terendah, atau rentang nilai.
-3. Isi filter (opsional).
-4. Untuk tertinggi/terendah, pilih jumlah tampilan (5, 10, atau semua). Untuk rentang, masukkan nilai minimum dan maksimum (batas bersifat inklusif).
+1. Jika sudah ada pengaturan tersimpan, program menawarkan: `Gunakan pengaturan terakhir ini? (y/n)`.
+2. Jika tidak memakai pengaturan lama: pilih parameter (pH, DO, BOD, COD, atau Nilai IP), lalu kriteria (tertinggi, terendah, atau rentang nilai).
+3. Untuk tertinggi/terendah, pilih jumlah tampilan (5, 10, atau semua). Untuk rentang, masukkan nilai minimum dan maksimum (batas bersifat inklusif).
+4. Pilihan disimpan sebagai pengaturan terakhir.
 
-**Menu 3 – Prioritas pemantauan.** Pilih jumlah lokasi teratas (5, 10, atau semua). Program menampilkan lokasi dengan Nilai IP tertinggi lebih dulu, lalu ringkasan jumlah titik per status mutu air.
+**Menu 3 – Prioritas pemantauan.** Lokasi pada daerah aktif diurutkan dari Nilai IP terbesar. Pilih jumlah lokasi teratas (5, 10, atau semua) atau pakai pengaturan terakhir. Program juga menampilkan ringkasan jumlah titik per status mutu air.
 
-### Contoh hasil (data 2020)
+**Menu 4 – Ganti daerah.** Mengubah filter daerah aktif dan menyimpannya.
+
+**Menu 5 – Logout.** Kembali ke menu awal.
+
+### Contoh hasil (data 2020, tanpa filter)
 
 | Pengujian | Hasil |
 | --- | --- |
@@ -147,23 +158,54 @@ Data dimuat: 149 baris valid, 1 baris dibuang.
 | Prioritas pertama (IP tertinggi) | 7,89 – Krueng Lamnyong, Banda Aceh (Cemar Sedang) |
 | Ringkasan status mutu air | Cemar Ringan 139, Cemar Sedang 9, Kondisi Baik 1 (total 149) |
 
-## Daftar Fungsi
+## Struktur Program
+
+Program disusun dalam tiga class dan dua fungsi bantu untuk file CSV.
+
+**Fungsi bantu**
 
 | Fungsi | Deskripsi |
 | --- | --- |
-| `ke_angka(teks)` | Mengubah teks menjadi float; menghapus `<`, mengganti koma desimal dengan titik; mengembalikan `None` jika gagal |
-| `input_password(password)` | Mengubah password menjadi kode hash sederhana |
+| `ke_angka(teks)` | Mengubah teks menjadi float; menghapus `<` dan mengganti koma desimal dengan titik; mengembalikan `None` jika gagal |
+| `baca_csv(path)` | Membaca file CSV (pemisah `;`) menjadi daftar baris; mengembalikan daftar kosong jika file belum ada |
+| `tulis_csv(path, baris_semua)` | Menulis daftar baris ke file CSV (pemisah `;`) |
+
+**Class `Akun`**
+
+| Method | Deskripsi |
+| --- | --- |
+| `register()` | Membuat akun baru dan menyimpannya ke `akun.csv` |
+| `login()` | Memverifikasi username dan password (maksimal 3 percobaan); mengembalikan username atau `None` |
+
+**Class `Pengaturan`**
+
+| Method | Deskripsi |
+| --- | --- |
+| `simpan(user, nama, nilai)` | Menyimpan satu pengaturan pengguna ke `pengaturan.csv` |
+| `daerah_aktif(user, ganti=False)` | Mengambil filter daerah aktif; meminta input baru jika belum ada atau jika `ganti=True` |
+
+**Class `Program`**
+
+| Method | Deskripsi |
+| --- | --- |
+| `muat_data()` | Membaca dataset, menyaring tahun 2020, memvalidasi nilai; mengembalikan `(data, dibuang)` |
 | `saring(data, kata)` | Menyaring data berdasarkan kabupaten, sungai, atau lokasi (tidak peka huruf besar/kecil) |
 | `urutkan(data, kunci, besar_dulu)` | Mengurutkan data dengan bubble sort, menaik atau menurun |
-| `pilih_jumlah(total, satuan)` | Meminta pilihan jumlah tampilan: 5, 10, atau semua |
-| `register(akun)` | Membuat akun baru |
-| `login(akun)` | Verifikasi login dengan maksimal 3 percobaan |
-| `muat_data()` | Membaca CSV, menyaring tahun 2020, dan memvalidasi nilai; mengembalikan `(data, dibuang)` |
+| `pilih_jumlah(satuan)` | Meminta pilihan jumlah tampilan: 5, 10, atau semua |
 | `cetak_tabel(hasil, kunci, label)` | Menampilkan hasil dalam bentuk tabel |
-| `menu_rata_rata(data)` | Menghitung rata-rata pH, DO, BOD, COD per sungai dan lokasi |
-| `menu_cari(data)` | Pencarian tertinggi, terendah, atau rentang nilai |
-| `menu_prioritas(data)` | Mengurutkan lokasi berdasarkan Nilai IP dan merangkum status mutu air |
+| `menu_rata_rata(data, user)` | Rata-rata pH, DO, BOD, COD per sungai dan lokasi |
+| `menu_cari(data, user)` | Pencarian tertinggi, terendah, atau rentang nilai dengan pengaturan tersimpan |
+| `menu_prioritas(data, user)` | Pengurutan lokasi berdasarkan Nilai IP dan ringkasan status mutu air |
 | `main()` | Mengatur alur program dari awal sampai selesai |
+
+**Format file penyimpanan** (pemisah `;`, encoding UTF-8)
+
+| File | Isi per baris |
+| --- | --- |
+| `akun.csv` | `username;password` |
+| `pengaturan.csv` | `username;nama_pengaturan;nilai` |
+
+Nama pengaturan yang disimpan: `daerah`, `param`, `kriteria`, `jumlah`, `bawah`, `atas`, `jml_prioritas`.
 
 ## Validasi Data
 
@@ -193,7 +235,7 @@ Rincian lengkap test case dan tracing fungsi tersedia pada laporan (Bab III).
 - Parameter dibatasi pada **pH, DO, BOD, COD** (ditambah Nilai IP dan status dari dataset).
 - Nilai IP dan status mutu air **diambil dari dataset**, bukan dihitung ulang oleh program.
 - Data bersifat sekunder; tidak ada pengambilan sampel atau pengukuran langsung.
-- Hash password menggunakan fungsi sederhana untuk keperluan pembelajaran, **bukan** untuk keamanan produksi.
+- Password disimpan apa adanya (tanpa enkripsi/hash) di `akun.csv`, sehingga program ini hanya untuk keperluan pembelajaran dan **tidak** untuk penggunaan produksi.
 - Hasil pengujian mencatat beberapa kasus yang belum ditangani pada versi saat ini, yaitu file CSV kosong total (`StopIteration`), nilai `nan`/`inf`, dan nilai di luar batas fisik (mis. pH > 14). Perbaikan yang direncanakan: `next(baca, None)`, pemeriksaan `math.isfinite()`, dan validasi rentang nilai.
 
 ## Tim
