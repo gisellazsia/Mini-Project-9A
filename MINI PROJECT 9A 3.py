@@ -6,7 +6,7 @@ file_data = os.path.join(folder, "data-kualitas-air-sungai.csv")
 file_akun = os.path.join(folder, "akun.csv")
 file_pref = os.path.join(folder, "pengaturan.csv")
 
-PARAM = {"1": ("ph", "pH"), "2": ("do", "DO (mg/L)"), "3": ("bod", "BOD (mg/L)"),
+PARAMETER = {"1": ("ph", "pH"), "2": ("do", "DO (mg/L)"), "3": ("bod", "BOD (mg/L)"),
          "4": ("cod", "COD (mg/L)"), "5": ("ip", "Nilai IP")}
 KRITERIA = {"1": "Tertinggi", "2": "Terendah", "3": "Rentang nilai"}
 
@@ -80,10 +80,18 @@ class Pengaturan:
 
 class Program:
     def saring(data, kata):
+        bagian = []
+        for b in kata.split("/"):
+            if b.strip() != "":
+                bagian.append(b.strip().lower())
         hasil = []
         for d in data:
-            teks = d["kabupaten"] + " " + d["sungai"] + " " + d["lokasi"]
-            if kata.lower() in teks.lower():
+            teks = (d["kabupaten"] + " " + d["sungai"] + " " + d["lokasi"]).lower()
+            cocok = True
+            for b in bagian:
+                if b not in teks:
+                    cocok = False
+            if cocok:
                 hasil.append(d)
         return hasil
 
@@ -196,14 +204,14 @@ class Program:
         kriteria = pref.get((user, "kriteria"))
         pakai = False
         if param is not None and kriteria is not None:
-            print("Pengaturan terakhir -> Parameter:", PARAM[param][1],
+            print("Pengaturan terakhir -> Parameter:", PARAMETER[param][1],
                   "| Kriteria:", KRITERIA[kriteria])
             pakai = input("Gunakan pengaturan terakhir ini? (y/n): ").strip().lower() == "y"
 
         if not pakai:
             print("  1. pH\n  2. DO (mg/L)\n  3. BOD (mg/L)\n  4. COD (mg/L)\n  5. Nilai IP")
             param = input("Pilih parameter (1-5): ").strip()
-            if param not in PARAM:
+            if param not in PARAMETER:
                 print("Pilihan tidak valid.")
                 return
             print("Kriteria: 1. Tertinggi  2. Terendah  3. Rentang nilai")
@@ -211,8 +219,13 @@ class Program:
             if kriteria == "3":
                 bawah = input("Nilai minimum (contoh: 6.5): ")
                 atas = input("Nilai maksimum (contoh: 8.5): ")
-                if ke_angka(bawah) is None or ke_angka(atas) is None:
+                bawah_n = ke_angka(bawah)
+                atas_n = ke_angka(atas)
+                if bawah_n is None or atas_n is None:
                     print("Nilai harus berupa angka.")
+                    return
+                if bawah_n > atas_n:
+                    print("Nilai minimum tidak boleh lebih besar dari nilai maksimum.")
                     return
                 Pengaturan.simpan(user, "bawah", bawah)
                 Pengaturan.simpan(user, "atas", atas)
@@ -228,7 +241,7 @@ class Program:
             Pengaturan.simpan(user, "kriteria", kriteria)
             print("(Pengaturan disimpan)")
 
-        kunci, label = PARAM[param]
+        kunci, label = PARAMETER[param]
 
         if kriteria == "3":
             bawah = ke_angka(pref[(user, "bawah")])
