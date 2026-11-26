@@ -36,59 +36,46 @@ KET = {
            ("> 10", "Cemar Berat", "risiko kesehatan tinggi", "penanganan segera, restorasi")],
 }
 
-akun = {}  
 pref = {}  
 
 class Akun:
-    def register():
+    def __init__(self):
+        self.akun = {}
+
+    def register(self):
         print("\n--- REGISTER ---")
         username = input("Username baru: ").strip()
         password = input("Password (min. 4 karakter): ")
         if username == "":
             print("Register gagal: username kosong.")
-        elif username in akun:
+        elif username in self.akun:
             print("Register gagal: username sudah dipakai.")
         elif len(password) < 4:
             print("Register gagal: password terlalu pendek.")
         else:
-            akun[username] = password
+            self.akun[username] = password
             print("Register berhasil! Silakan login.")
 
-    def login():
+    def login(self):
         print("\n--- LOGIN ---")
         for i in range(3):
             username = input("Username: ").strip()
             password = input("Password: ")
-            if username in akun and akun[username] == password:
+            if username in self.akun and self.akun[username] == password:
                 print("Login berhasil. Selamat datang,", username)
                 return username
             print("Username/password salah. Sisa percobaan:", 2 - i)
         return None
 
 
-class Pengaturan:
-    def simpan(user, nama, nilai):
-        pref[(user, nama)] = nilai
-
-    def daerah_aktif(user, data, ganti=False):
-        kata = pref.get((user, "daerah"))
-        if kata is None or ganti:
-            kata = input("Filter (contoh: Aceh Barat / Krueng Woyla, kosong = semua): ").strip()
-            Pengaturan.simpan(user, "daerah", kata if kata != "" else "*")
-            print("(Daerah disimpan)")
-        elif kata == "*":
-            kata = ""
-        print("Daerah aktif:", kata if kata != "" else "(semua)")
-        bagian = [b.strip().lower() for b in kata.split("/") if b.strip() != ""]
-        return [d for d in data
-                if all(b in (d["kabupaten"] + " " + d["sungai"] + " " + d["lokasi"]).lower() for b in bagian)]
-
-
 class Program:
-    def muat_data():
+    def __init__(self):
+        self.file_data = file_data
+
+    def muat_data(self):
         data = []
         dibuang = 0
-        with open(file_data, newline="", encoding="cp1252") as f:
+        with open(self.file_data, newline="", encoding="cp1252") as f:
             baca = csv.reader(f, delimiter=";")
             next(baca)
             for baris in baca:
@@ -107,7 +94,7 @@ class Program:
                              "status": baris[33].strip()})
         return data, dibuang
 
-    def cetak_tabel(hasil, daftar, label):
+    def cetak_tabel(self, hasil, daftar, label):
         if len(hasil) == 0:
             print("Data tidak ditemukan.")
             return
@@ -146,10 +133,22 @@ class Program:
             for rentang, st, risiko, solusi in KET[k]:
                 print(f"  {rentang}: {st} | Risiko: {risiko} | Solusi: {solusi}")
 
-    def menu_rata_rata(data, user):
+    def menu_rata_rata(self, data, user):
         print("\n--- RATA-RATA PER LOKASI ---")
+        kata_daerah = pref.get((user, "daerah"))
+        if kata_daerah is None:
+            kata_daerah = input("Filter (contoh: Aceh Barat / Krueng Woyla, kosong = semua): ").strip()
+            pref[(user, "daerah")] = kata_daerah if kata_daerah != "" else "*"
+            print("(Daerah disimpan)")
+        elif kata_daerah == "*":
+            kata_daerah = ""
+        print("Daerah aktif:", kata_daerah if kata_daerah != "" else "(semua)")
+        bagian_daerah = [b.strip().lower() for b in kata_daerah.split("/") if b.strip() != ""]
+        data_daerah = [d for d in data
+                       if all(b in (d["kabupaten"] + " " + d["sungai"] + " " + d["lokasi"]).lower()
+                              for b in bagian_daerah)]
         kelompok = {}
-        for d in Pengaturan.daerah_aktif(user, data):
+        for d in data_daerah:
             kelompok.setdefault((d["sungai"], d["lokasi"]), []).append(d)
         if len(kelompok) == 0:
             print("Data tidak ditemukan.")
@@ -190,15 +189,27 @@ class Program:
         else:
             print("Pilihan tidak valid.")
             return
-        Program.cetak_tabel(hasil, ["ph", "do", "bod", "cod"], "Rata-rata per lokasi")
+        self.cetak_tabel(hasil, ["ph", "do", "bod", "cod"], "Rata-rata per lokasi")
 
-    def menu_cari(data, user, prioritas=False):
+    def menu_cari(self, data, user, prioritas=False):
         if prioritas:
             print("\n--- PRIORITAS PEMANTAUAN (Nilai IP) ---")
             print("Lokasi diurutkan dari Nilai IP terbesar (paling tercemar) ke terkecil.")
         else:
             print("\n--- CARI DATA ---")
-        terfilter = Pengaturan.daerah_aktif(user, data)
+        kata_daerah = pref.get((user, "daerah"))
+        if kata_daerah is None:
+            kata_daerah = input("Filter (contoh: Aceh Barat / Krueng Woyla, kosong = semua): ").strip()
+            pref[(user, "daerah")] = kata_daerah if kata_daerah != "" else "*"
+            print("(Daerah disimpan)")
+        elif kata_daerah == "*":
+            kata_daerah = ""
+        print("Daerah aktif:", kata_daerah if kata_daerah != "" else "(semua)")
+        bagian_daerah = [b.strip().lower() for b in kata_daerah.split("/") if b.strip() != ""]
+        data_daerah = [d for d in data
+                       if all(b in (d["kabupaten"] + " " + d["sungai"] + " " + d["lokasi"]).lower()
+                              for b in bagian_daerah)]
+        terfilter = data_daerah
         nama_jml = "jml_prioritas" if prioritas else "jumlah"
         satuan = "lokasi" if prioritas else "data"
         if prioritas:
@@ -239,8 +250,8 @@ class Program:
                 if not urut_benar:
                     print("Nilai minimum tidak boleh lebih besar dari nilai maksimum.")
                     return
-                Pengaturan.simpan(user, "bawah", bawah)
-                Pengaturan.simpan(user, "atas", atas)
+                pref[(user, "bawah")] = bawah
+                pref[(user, "atas")] = atas
             else:
                 print("Tampilkan berapa", satuan + "?")
                 print("  1. 3 " + satuan + "\n  2. 5 " + satuan + "\n  3. Semua " + satuan)
@@ -248,10 +259,10 @@ class Program:
                 if pilih not in ("1", "2", "3"):
                     print("Pilihan tidak valid.")
                     return
-                Pengaturan.simpan(user, nama_jml, {"1": "3", "2": "5", "3": "semua"}[pilih])
+                pref[(user, nama_jml)] = {"1": "3", "2": "5", "3": "semua"}[pilih]
             if not prioritas:
-                Pengaturan.simpan(user, "param", param)
-                Pengaturan.simpan(user, "kriteria", kriteria)
+                pref[(user, "param")] = param
+                pref[(user, "kriteria")] = kriteria
             print("(Pengaturan disimpan)")
         kunci, label = PARAMETER[param]
         if kriteria == "3":
@@ -262,7 +273,7 @@ class Program:
             kode = pref[(user, nama_jml)]
             jumlah = len(terfilter) if kode == "semua" else int(kode)
             hasil = sorted(terfilter, key=lambda d: d[kunci], reverse=(kriteria == "1"))[:jumlah]
-        Program.cetak_tabel(hasil, [kunci], label)
+        self.cetak_tabel(hasil, [kunci], label)
         if prioritas:
             hitung = {}
             for d in terfilter:
@@ -271,20 +282,21 @@ class Program:
             for st in sorted(hitung):
                 print("  -", st + ":", hitung[st], "titik")
 
-    def main():
-        if not os.path.exists(file_data):
+    def main(self):
+        akun = Akun()
+        if not os.path.exists(self.file_data):
             print("File data tidak ditemukan:", file_data)
             return
-        data, dibuang = Program.muat_data()
+        data, dibuang = self.muat_data()
         print("Data dimuat:", len(data), "baris valid,", dibuang, "baris dibuang.")
         while True:
             print("\n=== KUALITAS AIR SUNGAI & DANAU ACEH 2020 ===")
             print(" 1. Register\n 2. Login\n 3. Keluar")
             pilih = input("Pilih (1-3): ").strip()
             if pilih == "1":
-                Akun.register()
+                akun.register()
             elif pilih == "2":
-                user = Akun.login()
+                user = akun.login()
                 while user is not None:
                     print("\n=== MENU UTAMA (user:", user + ") ===")
                     print(" 1. Rata-rata pH, DO, BOD, COD per lokasi")
@@ -294,14 +306,23 @@ class Program:
                     print(" 5. Logout")
                     menu = input("Pilih menu (1-5): ").strip()
                     if menu == "1":
-                        Program.menu_rata_rata(data, user)
+                        self.menu_rata_rata(data, user)
                     elif menu == "2":
-                        Program.menu_cari(data, user)
+                        self.menu_cari(data, user)
                     elif menu == "3":
-                        Program.menu_cari(data, user, prioritas=True)
+                        self.menu_cari(data, user, prioritas=True)
                     elif menu == "4":
                         print("\n--- GANTI DAERAH ---")
-                        Pengaturan.daerah_aktif(user, data, ganti=True)
+                        kata_daerah = input("Filter (contoh: Aceh Barat / Krueng Woyla, kosong = semua): ").strip()
+                        pref[(user, "daerah")] = kata_daerah if kata_daerah != "" else "*"
+                        print("(Daerah disimpan)")
+                        if kata_daerah == "*":
+                            kata_daerah = ""
+                        print("Daerah aktif:", kata_daerah if kata_daerah != "" else "(semua)")
+                        bagian_daerah = [b.strip().lower() for b in kata_daerah.split("/") if b.strip() != ""]
+                        data_daerah = [d for d in data
+                                       if all(b in (d["kabupaten"] + " " + d["sungai"] + " " + d["lokasi"]).lower()
+                                              for b in bagian_daerah)]
                     elif menu == "5":
                         print("Anda telah logout.")
                         user = None
@@ -315,4 +336,6 @@ class Program:
 
 
 if __name__ == "__main__":
-    Program.main()
+    Program().main()
+
+
