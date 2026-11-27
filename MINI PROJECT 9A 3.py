@@ -277,9 +277,17 @@ class Program:
             atas = float(pref[(user, "atas")].replace(",", "."))
             hasil = [d for d in terfilter if bawah <= d[kunci] <= atas]
         else:
+            kandidat = terfilter
+            if prioritas:
+                terbaik = {}
+                for d in terfilter:
+                    k = (d["sungai"], d["lokasi"])
+                    if k not in terbaik or d["ip"] > terbaik[k]["ip"]:
+                        terbaik[k] = d
+                kandidat = list(terbaik.values())
             kode = pref[(user, nama_jml)]
-            jumlah = len(terfilter) if kode == "semua" else int(kode)
-            hasil = sorted(terfilter, key=lambda d: d[kunci], reverse=(kriteria == "1"))[:jumlah]
+            jumlah = len(kandidat) if kode == "semua" else int(kode)
+            hasil = sorted(kandidat, key=lambda d: d[kunci], reverse=(kriteria == "1"))[:jumlah]
         self.cetak_tabel(hasil, [kunci], label)
         if prioritas:
             hitung = {}
