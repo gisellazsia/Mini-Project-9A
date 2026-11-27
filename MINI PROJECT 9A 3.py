@@ -179,7 +179,7 @@ class Program:
                 for no, r in enumerate(cocok, 1):
                     print(f"  {no}. {r['sungai']} - {r['lokasi']}")
                 pilih = input("Pilih nomor lokasi: ").strip()
-                if not pilih.isdigit() or not 1 <= int(pilih) <= len(cocok):
+                if not pilih.isdecimal() or not 1 <= int(pilih) <= len(cocok):
                     print("Pilihan tidak valid.")
                     return
                 cocok = [cocok[int(pilih) - 1]]
