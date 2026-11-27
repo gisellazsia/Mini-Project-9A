@@ -1,3 +1,37 @@
+"""
+                    ╔══════════════════════════════════════════════════════════════════╗
+                    ║                                                                  ║
+                    ║                           MINI PROJECT                           ║
+                    ║                       PEMROGRAMAN KOMPUTER                       ║
+                    ║                                                                  ║
+                    ║      (Klasifikasi Kualitas Air Sungai dan Danau Berdasarkan      ║
+                    ║         Rata-Rata pH, DO, BOD, dan COD serta Rekomendasi         ║
+                    ║        Prioritas Pemantauan di Provinsi Aceh Tahun 2020.)        ║
+                    ║                                                                  ║
+                    ║                        Oleh: Kelompok 9A                         ║
+                    ║                                                                  ║
+                    ║                        Anggota Kelompok:                         ║
+                    ║                Gisella Zashika Zifi  (2610931001)                ║
+                    ║                Muhammad Rauf         (2610932020)                ║
+                    ║                Miftahul Irsyad Hali  (2610932040)                ║
+                    ║                                                                  ║
+                    ║            Asisten Pembimbing : Intan Permata Mustika            ║
+                    ║              Dosen Pengampu     : WISNEL S.T, M.Sc.              ║
+                    ║                                                                  ║
+                    ║                    ▄██▄    ▄▄███████ ▄███ ▄██▄ ▄██▀              ║
+                    ║                    ████░░░░▀██▄▄▄▄▄▄░▀███░▀██▄███▄▄              ║
+                    ║      ░░░░░░░░░░░░░░▄██░░░░░▀▀▀▀▀▀███░████░████░░███░░░░░░░░░     ║
+                    ║         ░░░░░░░░░░░░▀████░░███████▀▀░▀██▀░███▀░░███░░░░░░░░      ║
+                    ║                  ░░░░░░░░░░░░░░░░░░░░░░░░░░░                     ║
+                    ║                           ░░░░░░░░░░                             ║                                                                  ║
+                    ║           LABORATORIUM SISTEM INFORMASI DAN KEPUTUSAN            ║
+                    ║                    DEPARTEMEN TEKNIK INDUSTRI                    ║
+                    ║                         FAKULTAS TEKNIK                          ║
+                    ║                       UNIVERSITAS ANDALAS                        ║
+                    ║                               2026                               ║
+                    ║                                                                  ║
+                    ╚══════════════════════════════════════════════════════════════════╝
+"""
 import csv
 import os
 
