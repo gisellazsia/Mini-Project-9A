@@ -1,109 +1,108 @@
-# Analisis Kualitas Air Sungai dan Danau di Provinsi Aceh Tahun 2020
+# Analisis Perbandingan Kualitas Air Sungai dan Danau Berdasarkan Rata-Rata Parameter pH, DO, BOD, dan COD untuk Menentukan Prioritas Pemantauan di Provinsi Aceh Tahun 2020
 
-Mini project mata kuliah Pemrograman Komputer, Kelompok 9A.
-Laboratorium Sistem Informasi dan Keputusan, Departemen Teknik Industri, Universitas Andalas.
+Mini project Pemrograman Komputer, Kelompok 9A.
+Laboratorium Sistem Informasi dan Keputusan, Departemen Teknik Industri, Fakultas Teknik, Universitas Andalas.
 
-## Tentang Program
+## Tentang program
 
-Program ini membaca data kualitas air sungai dan danau di Provinsi Aceh tahun 2020, lalu membantu pengguna melihat kondisi tiap lokasi pengamatan. Parameter yang dipakai adalah pH, DO, BOD, dan COD. Selain itu, program juga menampilkan lokasi mana yang sebaiknya dipantau lebih dulu berdasarkan Nilai Indeks Pencemaran (IP) dan status mutu air.
+Program ini mengolah data kualitas air sungai dan danau di Provinsi Aceh tahun 2020. Parameter yang dipakai ada empat: pH, DO, BOD, dan COD. Dari data itu program bisa menghitung rata-rata tiap lokasi, mencari nilai tertinggi, terendah, atau rentang tertentu, lalu mengurutkan lokasi berdasarkan Nilai IP (Indeks Pencemaran) supaya kelihatan lokasi mana yang sebaiknya dipantau duluan.
 
-Program dibuat dengan Python dan dijalankan lewat terminal. Tidak ada library tambahan yang perlu dipasang.
+Dibuat pakai Python dan dijalankan lewat terminal. Tidak perlu install apa-apa karena hanya memakai modul bawaan (`csv` dan `os`).
 
 ## Fitur
 
-- Register dan login (login diberi 3 kali kesempatan)
-- Rata-rata pH, DO, BOD, dan COD per lokasi pengamatan
-- Pencarian data berdasarkan parameter: nilai tertinggi, terendah, atau rentang nilai tertentu
-- Prioritas pemantauan, yaitu lokasi diurutkan dari Nilai IP terbesar, lengkap dengan jumlah titik untuk tiap status mutu air
-- Filter daerah (kabupaten, sungai, atau lokasi) yang bisa diganti kapan saja
-- Pengaturan terakhir tiap pengguna tersimpan, jadi tidak perlu memilih ulang setiap kali
+- Register dan login (login punya 3 kali kesempatan)
+- Rata-rata pH, DO, BOD, dan COD per lokasi, bisa semua lokasi atau satu lokasi saja
+- Cari data tertinggi, terendah, atau dalam rentang nilai tertentu
+- Prioritas pemantauan, yaitu lokasi diurutkan dari Nilai IP terbesar disertai jumlah titik untuk tiap status mutu air
+- Filter daerah (kabupaten/kota, sungai, atau lokasi) yang bisa diganti kapan saja
+- Pengaturan terakhir diingat selama program masih jalan
+- Setiap tabel ada status tiap nilai beserta keterangan rentang, risiko, dan solusinya
 
 ## Data
 
-Data diambil dari [Open Data Aceh](https://data.acehprov.go.id/id/dataset/parameter-kualitas-air-sungai-dan-danau/resource/0ee08406-9f75-426d-82fb-5e7370e12bb7) (Data Kualitas Air Sungai dan Danau Tahun 2020).
+Datanya dari Open Data Aceh, judulnya "Data Kualitas Air Sungai dan Danau Tahun 2020":
+https://data.acehprov.go.id/id/dataset/parameter-kualitas-air-sungai-dan-danau/resource/0ee08406-9f75-426d-82fb-5e7370e12bb7
 
-- Format file: CSV, pemisah titik koma (`;`)
-- Jumlah data: 150 baris dan 34 kolom
-- Setelah dibersihkan: 149 baris dipakai, 1 baris dibuang
+- Format CSV, dipisah titik koma (`;`), encoding `cp1252`
+- 150 baris dan 34 kolom
+- Setelah dibersihkan, 149 baris terpakai dan 1 baris dibuang
 
-Baris akan dibuang kalau kolomnya kurang dari 34, tahunnya bukan 2020, atau nilai pH, DO, BOD, COD, dan IP-nya kosong atau bukan angka. Tanda `<` pada nilai (misalnya `<3.2234`) dihapus, dan koma desimal diubah menjadi titik.
+Sebuah baris dibuang kalau kolomnya kurang dari 34, tahunnya bukan 2020, atau nilai pH, DO, BOD, COD, dan IP-nya kosong atau bukan angka. Tanda `<` di depan angka (misalnya `<3.2234`) dihapus dan koma desimal diganti titik.
 
-## Isi Folder
+## Isi folder
 
 ```
 main.py                        program utama
 data-kualitas-air-sungai.csv   dataset
-akun.csv                       dibuat otomatis saat ada yang register
-pengaturan.csv                 dibuat otomatis saat pengaturan disimpan
 README.md
 ```
 
-File `main.py` dan `data-kualitas-air-sungai.csv` harus berada di folder yang sama. Nama file CSV-nya harus persis seperti di atas.
+`main.py` dan file CSV harus ada di satu folder, dan nama CSV-nya harus sama persis seperti di atas. Kalau tidak ketemu, program juga mencoba `data-kualitas-air-sungai (1).csv` dan `data-kualitas-air-sungai(1).csv`.
 
-## Cara Menjalankan
+## Cara menjalankan
 
 1. Pastikan Python 3 sudah terpasang.
-2. Taruh `main.py` dan `data-kualitas-air-sungai.csv` dalam satu folder.
-3. Buka terminal di folder tersebut, lalu jalankan:
+2. Taruh `main.py` dan file CSV dalam satu folder.
+3. Buka terminal di folder itu, lalu jalankan:
 
 ```
 python main.py
 ```
 
-Kalau berhasil, program akan menampilkan jumlah data yang terbaca, contohnya:
+Kalau data berhasil dibaca, muncul tulisan seperti ini:
 
 ```
 Data dimuat: 149 baris valid, 1 baris dibuang.
 ```
 
-## Cara Pakai
+Kalau file CSV tidak ditemukan, program menampilkan pesan `File data tidak ditemukan` lalu berhenti.
 
-Di menu awal, buat akun dulu lewat **Register** (password minimal 4 karakter), lalu masuk lewat **Login**.
+## Cara pakai
 
-Setelah login, ada lima menu:
+Buat akun dulu lewat menu Register (username tidak boleh kosong atau sudah dipakai, password minimal 4 karakter), lalu masuk lewat Login. Setelah login ada lima menu:
 
-1. **Rata-rata per lokasi**: menampilkan rata-rata pH, DO, BOD, dan COD untuk setiap sungai dan lokasi.
-2. **Cari data**: pilih parameter (pH, DO, BOD, COD, atau Nilai IP), lalu pilih tertinggi, terendah, atau rentang nilai. Untuk tertinggi dan terendah, jumlah data yang ditampilkan bisa 5, 10, atau semua. Untuk rentang, isi nilai minimum dan maksimum.
-3. **Prioritas pemantauan**: menampilkan lokasi dengan Nilai IP tertinggi (paling tercemar) lebih dulu, lalu ringkasan jumlah titik per status mutu air.
-4. **Ganti daerah**: mengubah filter daerah.
-5. **Logout**
+| Menu | Fungsi |
+| --- | --- |
+| 1. Rata-rata per lokasi | Menampilkan rata-rata pH, DO, BOD, dan COD untuk tiap pasangan sungai dan lokasi. Bisa tampil semua (diurutkan dari yang tertinggi berdasarkan pH, DO, BOD, atau COD) atau cari satu lokasi. |
+| 2. Cari data | Pilih parameter, lalu pilih tertinggi, terendah, atau rentang. Untuk tertinggi dan terendah, jumlah yang ditampilkan bisa 3, 5, atau semua. Untuk rentang, isi nilai minimum dan maksimum. |
+| 3. Prioritas pemantauan | Menampilkan lokasi dengan Nilai IP tertinggi (paling tercemar) lebih dulu, bisa 3, 5, atau semua, lalu ringkasan jumlah titik per status mutu air. |
+| 4. Ganti daerah | Mengubah filter daerah. |
+| 5. Logout | Kembali ke menu awal. |
 
-Tentang filter daerah: saat pertama kali membuka menu 1, 2, atau 3, program akan menanyakan filternya, misalnya `Aceh Barat`. Dikosongkan berarti semua data. Pilihan ini disimpan dan dipakai lagi di menu lain sampai kamu menggantinya lewat menu 4. Pencarian tidak membedakan huruf besar dan kecil.
+Soal filter daerah: waktu pertama kali membuka menu 1, 2, atau 3, program menanyakan filter, misalnya `Aceh Barat`. Kalau dikosongkan, semua data dipakai. Tanda `/` dipakai untuk memisahkan beberapa kata kunci yang semuanya harus cocok, misalnya `Aceh Barat / Krueng Woyla`. Huruf besar dan kecil tidak berpengaruh. Filter ini terus dipakai di menu lain sampai diganti lewat menu 4.
 
-Tentang pengaturan terakhir: di menu 2 dan 3, kalau sebelumnya sudah pernah memilih, program akan bertanya apakah mau memakai pengaturan itu lagi (`y/n`).
+Di menu 2 dan 3, kalau sebelumnya sudah pernah memilih, program akan tanya apakah mau pakai pengaturan yang sama (`y/n`). Akun dan pengaturan hanya tersimpan selama program berjalan, jadi hilang kalau program ditutup.
 
-## Contoh Hasil
+## Contoh hasil
 
-Hasil berikut didapat dari data tahun 2020 tanpa filter:
+Dari data 2020 tanpa filter:
 
-- Jumlah lokasi unik: 78
-- pH tertinggi: 8,66 (Krueng Jambo Ayee, Banda Aceh)
-- pH terendah: 6,17 (Krueng Woyla, Aceh Barat)
-- BOD tertinggi: sekitar 31,4 (Danau Aneuk Laot, Sabang)
-- Nilai IP tertinggi: 7,89 (Krueng Lamnyong, Banda Aceh), status Cemar Sedang
+- Jumlah lokasi unik (pasangan sungai dan lokasi): 78
+- pH tertinggi 8,66 di Krueng Jambo Ayee, Kota Banda Aceh
+- pH terendah 6,17 di Krueng Woyla, Kabupaten Aceh Barat
+- BOD tertinggi sekitar 31,4 di Danau Aneuk Laot, Kota Sabang
+- Nilai IP tertinggi 7,89 di Krueng Lamnyong, Kota Banda Aceh (Cemar Sedang)
 - Status mutu air: Cemar Ringan 139 titik, Cemar Sedang 9 titik, Kondisi Baik 1 titik
 
-## Struktur Kode
+## Struktur kode
 
-Kode dibagi menjadi tiga class:
+Ada dua class:
 
-- `Akun`: `register()` dan `login()`
-- `Pengaturan`: `simpan()` untuk menyimpan pengaturan pengguna dan `daerah_aktif()` untuk filter daerah
-- `Program`: membaca dan membersihkan data (`muat_data`), menyaring (`saring`), mengurutkan dengan bubble sort (`urutkan`), mencetak tabel (`cetak_tabel`), ketiga menu utama, dan `main()`
+- `Akun` berisi `register()` dan `login()`. Akun disimpan di dictionary `self.akun`.
+- `Program` berisi `muat_data()` untuk membaca dan membersihkan data, `cetak_tabel()` untuk mencetak tabel, `menu_rata_rata()`, `menu_cari()` (dipakai juga untuk prioritas pemantauan lewat `prioritas=True`), dan `main()`.
 
-Ada juga tiga fungsi di luar class: `ke_angka()` untuk mengubah teks menjadi angka, serta `baca_csv()` dan `tulis_csv()` untuk membaca dan menulis file akun dan pengaturan.
+Di bagian atas kode ada beberapa konstanta: `PARAMETER`, `KRITERIA`, `NAMA`, `BATAS` (batas status mutu BOD, COD, dan DO), dan `KET` (keterangan rentang, risiko, solusi). Pengaturan pengguna disimpan di dictionary `pref` dengan kunci `(user, nama_pengaturan)`.
 
-Format isi file penyimpanan (pemisah `;`):
-
-- `akun.csv`: `username;password`
-- `pengaturan.csv`: `username;nama_pengaturan;nilai`
+Status mutu air mengacu pada PP No. 22 Tahun 2021 Lampiran VI, sedangkan Nilai IP dan statusnya mengacu pada KepMen LH No. 115 Tahun 2003.
 
 ## Keterbatasan
 
-- Hanya memakai data tahun 2020 dan parameter pH, DO, BOD, COD, serta Nilai IP.
-- Nilai IP dan status mutu air diambil langsung dari dataset, tidak dihitung ulang oleh program.
-- Password disimpan apa adanya di `akun.csv` tanpa enkripsi, jadi program ini hanya cocok untuk latihan.
-- Program belum menangani file CSV yang benar-benar kosong (akan error), serta nilai `nan`/`inf` atau nilai yang tidak masuk akal (misalnya pH di atas 14).
+- Hanya memakai data 2020 dan parameter pH, DO, BOD, COD, serta Nilai IP.
+- Nilai IP dan status mutu air diambil langsung dari dataset, tidak dihitung ulang.
+- Akun dan pengaturan hanya ada di memori, jadi hilang saat program ditutup.
+- Password disimpan apa adanya tanpa enkripsi, jadi hanya cocok untuk latihan.
+- File CSV yang benar-benar kosong akan bikin error, dan nilai `nan`/`inf` atau nilai tidak masuk akal (misalnya pH di atas 14) belum ditangani.
 
 ## Anggota Kelompok 9A
 
